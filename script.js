@@ -1,104 +1,112 @@
-const start=document.getElementById("start");
+const start = document.getElementById("start");
+const page = document.getElementById("page1");
+const music = document.getElementById("music");
+let selectedColor = "#ff1493";
 
-const page=document.getElementById("page1");
-
-const music=document.getElementById("music");
-
-start.onclick=()=>{
-
-document.querySelector(".loading").style.display="none";
-
-page.classList.remove("hidden");
-
-music.play();
-
+start.onclick = () => {
+  document.querySelector(".loading").style.display = "none";
+  page.classList.remove("hidden");
+  music.play();
 }
 
-// Photo zoom functionality
-document.querySelectorAll(".gallery-img").forEach(img=>{
-
-img.onclick=()=>{
-
-img.classList.toggle("zoom");
-
-}
-
-});
-
-// Save and load captions from localStorage
-document.querySelectorAll(".caption-input").forEach((textarea, index) => {
-  // Load saved caption
-  const savedCaption = localStorage.getItem(`caption-${index}`);
-  if (savedCaption) {
-    textarea.value = savedCaption;
-    // Update display caption
-    const captionText = textarea.parentElement.querySelector(".caption-text");
-    captionText.textContent = savedCaption;
-  }
-
-  // Save caption on change
-  textarea.addEventListener("input", function() {
-    localStorage.setItem(`caption-${index}`, this.value);
-    // Update display caption in real-time
-    const captionText = this.parentElement.querySelector(".caption-text");
-    if (this.value.trim()) {
-      captionText.textContent = this.value;
-    } else {
-      // Reset to default if empty
-      const defaults = [
-        "Summer memories together ☀️",
-        "Laughing at silly moments 😂",
-        "Best moments with you 💫",
-        "Smile that brightens my day 🌟",
-        "Adventures with my favorite person 🌍",
-        "Creating forever memories 💕",
-        "You make everything better ✨",
-        "Happy with you always 🤍"
-      ];
-      captionText.textContent = defaults[index];
-    }
+// Color picker functionality
+document.querySelectorAll(".color-btn").forEach(btn => {
+  btn.addEventListener("click", function() {
+    document.querySelectorAll(".color-btn").forEach(b => b.classList.remove("active"));
+    this.classList.add("active");
+    selectedColor = this.dataset.color;
   });
 });
 
-const text = `
+// Generate QR Code
+const generateBtn = document.getElementById("generateBtn");
+const downloadBtn = document.getElementById("downloadBtn");
+const copyBtn = document.getElementById("copyBtn");
+const resetBtn = document.getElementById("resetBtn");
+const qrInput = document.getElementById("qrInput");
+const qrContainer = document.getElementById("qrcode");
 
-hbd yaa yang ke 17 🤍
+let currentQR = null;
 
-semoga makin bahagia makin sehat
+generateBtn.addEventListener("click", function() {
+  const inputValue = qrInput.value.trim();
+  
+  if (!inputValue) {
+    alert("Please enter a URL or message!");
+    return;
+  }
+  
+  // Clear previous QR code
+  qrContainer.innerHTML = "";
+  
+  // Generate new QR code with selected color
+  currentQR = new QRCode(qrContainer, {
+    text: inputValue,
+    width: 300,
+    height: 300,
+    colorDark: selectedColor,
+    colorLight: "#ffffff",
+    correctLevel: QRCode.CorrectLevel.H
+  });
+  
+  // Show download button after generation
+  setTimeout(() => {
+    downloadBtn.style.display = "inline-block";
+    copyBtn.style.display = "inline-block";
+  }, 500);
+});
 
-semoga semua yang diinginin pelan pelan tercapai
+// Download QR Code
+downloadBtn.addEventListener("click", function() {
+  const canvas = qrContainer.querySelector("canvas");
+  if (canvas) {
+    const link = document.createElement("a");
+    link.href = canvas.toDataURL("image/png");
+    link.download = "qr-love.png";
+    link.click();
+  }
+});
 
-semoga tahun ini jadi tahun yang seru
+// Copy QR Code to clipboard
+copyBtn.addEventListener("click", function() {
+  const canvas = qrContainer.querySelector("canvas");
+  if (canvas) {
+    canvas.toBlob(function(blob) {
+      navigator.clipboard.write([
+        new ClipboardItem({ "image/png": blob })
+      ]).then(() => {
+        alert("QR Code copied to clipboard!");
+      }).catch(() => {
+        alert("Failed to copy QR Code");
+      });
+    });
+  }
+});
 
-banyak hal baik dateng ke hidup kamu
+// Reset
+resetBtn.addEventListener("click", function() {
+  qrContainer.innerHTML = "";
+  qrInput.value = "";
+  downloadBtn.style.display = "none";
+  copyBtn.style.display = "none";
+  selectedColor = "#ff1493";
+  document.querySelectorAll(".color-btn").forEach((b, idx) => {
+    if (idx === 2) b.classList.add("active");
+    else b.classList.remove("active");
+  });
+});
 
-jangan lupa sekarang udah bisa bikin ktp wkwkwk
+// Use example message
+document.querySelectorAll(".use-msg-btn").forEach(btn => {
+  btn.addEventListener("click", function() {
+    const message = this.parentElement.querySelector("p").textContent;
+    qrInput.value = message;
+  });
+});
 
-makasih yaa udah jadi diri kamu sendiri
-
-semoga kita bisa terus bikin banyak kenangan baru bareng
-
-happy birthday vanesa 🤍
-
-`;
-
-const typing = document.getElementById("typing");
-
-let i = 0;
-
-function type(){
-
-if(i < text.length){
-
-typing.innerHTML += text.charAt(i);
-
-i++;
-
-setTimeout(type,40);
-
-}
-
-}
+// Hide buttons initially
+downloadBtn.style.display = "none";
+copyBtn.style.display = "none";
 
 // Confetti effect
 function confetti() {
@@ -125,7 +133,7 @@ function confetti() {
       for (let i = 0; i < 5; i++) {
         const heartEl = document.createElement("div");
         heartEl.className = "heart";
-        heartEl.textContent = "🤍";
+        heartEl.textContent = "💕";
         heartEl.style.left = randomInRange(0, window.innerWidth) + "px";
         heartEl.style.fontSize = randomInRange(16, 32) + "px";
         heartEl.style.animationDuration = randomInRange(8, 12) + "s";
@@ -137,7 +145,6 @@ function confetti() {
   }, 250);
 }
 
-window.onload=()=>{
-  setTimeout(type,1200);
-  setTimeout(confetti,3000);
+window.onload = () => {
+  setTimeout(confetti, 1000);
 };
