@@ -1,89 +1,75 @@
-const start = document.getElementById("start");
-const page = document.getElementById("page1");
-const music = document.getElementById("music");
-let selectedColor = "#ff1493";
+const start=document.getElementById("start");
 
-start.onclick = () => {
-  document.querySelector(".loading").style.display = "none";
-  page.classList.remove("hidden");
-  music.play();
+const page=document.getElementById("page1");
+
+const music=document.getElementById("music");
+
+start.onclick=()=>{
+
+document.querySelector(".loading").style.display="none";
+
+page.classList.remove("hidden");
+
+music.play();
+
 }
 
-// Color picker functionality
-document.querySelectorAll(".color-btn").forEach(btn => {
-  btn.addEventListener("click", function() {
-    document.querySelectorAll(".color-btn").forEach(b => b.classList.remove("active"));
-    this.classList.add("active");
-    selectedColor = this.dataset.color;
-  });
+// Photo zoom functionality
+document.querySelectorAll(".gallery-img").forEach(img=>{
+
+img.onclick=()=>{
+
+img.classList.toggle("zoom");
+
+}
+
 });
 
-// Generate QR Code
-const generateBtn = document.getElementById("generateBtn");
-const downloadBtn = document.getElementById("downloadBtn");
-const resetBtn = document.getElementById("resetBtn");
-const qrInput = document.getElementById("qrInput");
-const qrContainer = document.getElementById("qrcode");
+const text = `
 
-let currentQR = null;
+hbd yaa yang ke 17 🤍
 
-generateBtn.addEventListener("click", function() {
-  const inputValue = qrInput.value.trim();
-  
-  if (!inputValue) {
-    alert("Please enter a URL or message!");
-    return;
-  }
-  
-  // Clear previous QR code
-  qrContainer.innerHTML = "";
-  
-  // Generate new QR code with selected color
-  currentQR = new QRCode(qrContainer, {
-    text: inputValue,
-    width: 300,
-    height: 300,
-    colorDark: selectedColor,
-    colorLight: "#ffffff",
-    correctLevel: QRCode.CorrectLevel.H
-  });
-  
-  // Show download button after generation
-  setTimeout(() => {
-    downloadBtn.style.display = "inline-block";
-  }, 500);
-});
+semoga makin bahagia makin sehat
 
-// Download QR Code
-downloadBtn.addEventListener("click", function() {
-  const canvas = qrContainer.querySelector("canvas");
-  if (canvas) {
-    const link = document.createElement("a");
-    link.href = canvas.toDataURL("image/png");
-    link.download = "qr-love.png";
-    link.click();
-  }
-});
+semoga semua yang diinginin pelan pelan tercapai
 
-// Reset
-resetBtn.addEventListener("click", function() {
-  qrContainer.innerHTML = "";
-  qrInput.value = "";
-  downloadBtn.style.display = "none";
-  selectedColor = "#ff1493";
-  document.querySelectorAll(".color-btn").forEach((b, idx) => {
-    if (idx === 2) b.classList.add("active");
-    else b.classList.remove("active");
-  });
-});
+semoga tahun ini jadi tahun yang seru
 
-// Hide buttons initially
-downloadBtn.style.display = "none";
+banyak hal baik dateng ke hidup kamu
+
+jangan lupa sekarang udah bisa bikin ktp wkwkwk
+
+makasih yaa udah jadi diri kamu sendiri
+
+semoga kita bisa terus bikin banyak kenangan baru bareng
+
+happy birthday vanesa 🤍
+
+`;
+
+const typing = document.getElementById("typing");
+
+let i = 0;
+
+function type(){
+
+if(i < text.length){
+
+typing.innerHTML += text.charAt(i);
+
+i++;
+
+setTimeout(type,40);
+
+}
+
+}
 
 // Confetti effect
 function confetti() {
   const duration = 2000;
   const animationEnd = Date.now() + duration;
+  const defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 0 };
 
   function randomInRange(min, max) {
     return Math.random() * (max - min) + min;
@@ -96,13 +82,15 @@ function confetti() {
       return clearInterval(interval);
     }
 
+    const particleCount = 50 * (timeLeft / duration);
+
     // Create heart confetti
     const hearts = document.querySelectorAll(".hearts");
     hearts.forEach(heart => {
       for (let i = 0; i < 5; i++) {
         const heartEl = document.createElement("div");
         heartEl.className = "heart";
-        heartEl.textContent = "💕";
+        heartEl.textContent = "🤍";
         heartEl.style.left = randomInRange(0, window.innerWidth) + "px";
         heartEl.style.fontSize = randomInRange(16, 32) + "px";
         heartEl.style.animationDuration = randomInRange(8, 12) + "s";
@@ -114,6 +102,7 @@ function confetti() {
   }, 250);
 }
 
-window.onload = () => {
-  setTimeout(confetti, 1000);
+window.onload=()=>{
+  setTimeout(type,1200);
+  setTimeout(confetti,3000);
 };
